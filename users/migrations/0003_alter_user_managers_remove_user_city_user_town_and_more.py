@@ -10,51 +10,127 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lms', '0001_initial'),
-        ('users', '0002_alter_user_options_remove_user_username_user_avatar_and_more'),
+        ("lms", "0001_initial"),
+        ("users", "0002_alter_user_options_remove_user_username_user_avatar_and_more"),
     ]
 
     operations = [
         migrations.AlterModelManagers(
-            name='user',
+            name="user",
             managers=[
-                ('objects', users.models.UserManager()),
+                ("objects", users.models.UserManager()),
             ],
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='city',
+            model_name="user",
+            name="city",
         ),
         migrations.AddField(
-            model_name='user',
-            name='town',
-            field=models.CharField(blank=True, help_text='Введите название города', max_length=35, null=True, verbose_name='город'),
+            model_name="user",
+            name="town",
+            field=models.CharField(
+                blank=True,
+                help_text="Введите название города",
+                max_length=35,
+                null=True,
+                verbose_name="город",
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='avatar',
-            field=models.ImageField(blank=True, help_text='Загрузите аватар', null=True, upload_to='users/avatars', verbose_name='аватар'),
+            model_name="user",
+            name="avatar",
+            field=models.ImageField(
+                blank=True,
+                help_text="Загрузите аватар",
+                null=True,
+                upload_to="users/avatars",
+                verbose_name="аватар",
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='email',
-            field=models.EmailField(help_text='Введите почту', max_length=254, unique=True, verbose_name='почта'),
+            model_name="user",
+            name="email",
+            field=models.EmailField(
+                help_text="Введите почту",
+                max_length=254,
+                unique=True,
+                verbose_name="почта",
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='phone',
-            field=models.CharField(blank=True, help_text='Введите номер телефона', max_length=35, null=True, verbose_name='телефон'),
+            model_name="user",
+            name="phone",
+            field=models.CharField(
+                blank=True,
+                help_text="Введите номер телефона",
+                max_length=35,
+                null=True,
+                verbose_name="телефон",
+            ),
         ),
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('payment_date', models.DateField(default=datetime.datetime.now, verbose_name='Дата оплаты')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=20, verbose_name='Сумма')),
-                ('type', models.CharField(choices=[('BANK_TRANSFER', 'Банковский перевод'), ('CASH', 'Наличными')], max_length=50, verbose_name='Способ оплаты')),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
-                ('paid_course', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='lms.course', verbose_name='Оплаченный курс')),
-                ('paid_lesson', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='lms.lesson', verbose_name='Оплаченный урок')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "payment_date",
+                    models.DateField(
+                        default=datetime.datetime.now, verbose_name="Дата оплаты"
+                    ),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=20, verbose_name="Сумма"
+                    ),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("BANK_TRANSFER", "Банковский перевод"),
+                            ("CASH", "Наличными"),
+                        ],
+                        max_length=50,
+                        verbose_name="Способ оплаты",
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь",
+                    ),
+                ),
+                (
+                    "paid_course",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="lms.course",
+                        verbose_name="Оплаченный курс",
+                    ),
+                ),
+                (
+                    "paid_lesson",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="lms.lesson",
+                        verbose_name="Оплаченный урок",
+                    ),
+                ),
             ],
         ),
     ]
