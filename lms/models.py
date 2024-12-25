@@ -27,7 +27,7 @@ class Course(models.Model):
         verbose_name_plural = "Курсы"
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Lesson(models.Model):

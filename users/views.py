@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from serializers import UserSerializer
+from users.serializers import UserSerializer
 
 from .models import Payment, User
 from .serializers import PaymentSerializer
