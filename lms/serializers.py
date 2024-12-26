@@ -20,7 +20,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            "title",
+            "name",
             "description",
             "preview",
             "count_of_lessons",
