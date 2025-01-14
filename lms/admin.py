@@ -9,4 +9,4 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'course', 'description')
+    list_display = ("name", "course", "description")
