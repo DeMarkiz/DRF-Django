@@ -45,6 +45,7 @@ class LessonCreateApiView(generics.CreateAPIView):
 
 class LessonListApiView(generics.ListAPIView):
     """Список"""
+
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
@@ -57,6 +58,7 @@ class LessonListApiView(generics.ListAPIView):
 
 class LessonRetrieveApiView(generics.RetrieveAPIView):
     """Получить"""
+
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -64,6 +66,7 @@ class LessonRetrieveApiView(generics.RetrieveAPIView):
 
 class LessonUpdateApiView(generics.UpdateAPIView):
     """Обновить"""
+
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -71,6 +74,7 @@ class LessonUpdateApiView(generics.UpdateAPIView):
 
 class LessonDestroyApiView(generics.DestroyAPIView):
     """Удалить"""
+
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]

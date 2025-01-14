@@ -9,4 +9,4 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'amount', 'method')
+    list_display = ("user", "amount", "method")

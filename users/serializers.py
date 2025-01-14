@@ -6,7 +6,7 @@ class PaymentSerializer(ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CustomUserSerializer(ModelSerializer):
@@ -14,7 +14,7 @@ class CustomUserSerializer(ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = '__all__'
+        fields = "__all__"
 
 
 class UserCommonSerializer(ModelSerializer):
