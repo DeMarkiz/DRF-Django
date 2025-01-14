@@ -1,7 +1,12 @@
 from django.contrib import admin
+from .models import CustomUser, Payment
 
-from .models import Course, Lesson, Payment
 
-admin.site.register(Course)
-admin.site.register(Lesson)
-admin.site.register(Payment)
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ("id", "email")
+
+
+@admin.register(Payment)
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'amount', 'method')
