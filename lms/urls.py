@@ -7,6 +7,7 @@ from .views import (
     LessonUpdateApiView,
     LessonDestroyApiView,
     LessonRetrieveApiView,
+    CourseSubscriptionApiView,
 )
 
 from rest_framework.mixins import CreateModelMixin
