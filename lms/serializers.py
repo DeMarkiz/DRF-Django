@@ -1,9 +1,11 @@
-from .models import Course, Lesson
+from .models import Course, Lesson, CourseSubscription
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework import serializers
+from lms.validators import validate_url
 
 
 class LessonSerializer(ModelSerializer):
+    url = serializers.URLField(validators=[validate_url])
 
     class Meta:
         model = Lesson
@@ -20,3 +22,10 @@ class CourseSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+
+
+class CourseSubscriptionSerializer(ModelSerializer):
+
+    class Meta:
+        model = CourseSubscription
+        fields = ["course"]
