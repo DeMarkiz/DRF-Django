@@ -29,3 +29,4 @@ class CourseSubscriptionSerializer(ModelSerializer):
     class Meta:
         model = CourseSubscription
         fields = ["course"]
+        read_only_fields = ('user',)
