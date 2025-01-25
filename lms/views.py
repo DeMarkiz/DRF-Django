@@ -1,3 +1,5 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets, views
 from users.permissions import IsModer, IsOwner
 from django.shortcuts import get_object_or_404
@@ -89,19 +91,36 @@ class LessonDestroyApiView(generics.DestroyAPIView):
 
 
 class CourseSubscriptionApiView(views.APIView):
-    serializer_class = CourseSubscriptionSerializer
-    queryset = CourseSubscription.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = CourseSubscriptionSerializer
 
-    def post(self, request, *args, **kwargs):
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @swagger_auto_schema(
+        request_body=CourseSubscriptionSerializer,
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            )
+        }
+    )
+    def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get("course")
-        course = get_object_or_404(Course, id=course_id)
-        sub_items = self.queryset.filter(user=user, course=course)
-        if sub_items.exists():
-            sub_items.delete()
-            message = "Подписка удалена"
+        course_id = self.request.data.get('course')
+        course_item = generics.get_object_or_404(Course.objects.all(), pk=course_id)
+        subs_item = course_item.subscriptions.filter(user=user)
+
+        # Если подписка у пользователя на этот курс есть - удаляем ее
+        if subs_item.exists():
+            subs_item.delete()
+            message = 'подписка удалена'
+        # Если подписки у пользователя на этот курс нет - создаем ее
         else:
-            CourseSubscription.objects.create(user=user, course=course)
-            message = "Подписка активирована"
+            CourseSubscription.objects.create(user=user, course=course_item)
+            message = 'подписка добавлена'
+        # Возвращаем ответ в API
         return Response({"message": message})
