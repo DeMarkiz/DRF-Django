@@ -30,10 +30,23 @@ class CustomUser(AbstractUser):
 
 class Payment(models.Model):
 
-    CASH = "cash"
-    TRANSFER = "transfer"
+    PAYMENT_CASH = "cash"
+    PAYMENT_TRANSFER = "transfer"
 
-    METHOD_CHOICES = [(CASH, "Наличные"), (TRANSFER, "Перевод")]
+    PAYMENT_CHOICES = [
+        (PAYMENT_CASH, 'Наличные'),
+        (PAYMENT_TRANSFER, 'Перевод на счет'),
+    ]
+
+    STATUS_UNPAID = 'unpaid'
+    STATUS_PAID = 'paid'
+
+    STATUS_CHOICES = [
+        (STATUS_UNPAID, 'не оплачено'),
+        (STATUS_PAID, 'оплачено'),
+    ]
+
+    METHOD_CHOICES = [(PAYMENT_CASH, "Наличные"), (PAYMENT_TRANSFER, "Перевод")]
 
     user = models.ForeignKey(
         CustomUser,
@@ -63,8 +76,8 @@ class Payment(models.Model):
     )
     method = models.CharField(
         max_length=8,
-        choices=METHOD_CHOICES,
-        default=TRANSFER,
+        choices=PAYMENT_CHOICES,
+        default=PAYMENT_TRANSFER,
         verbose_name="Способ оплаты",
     )
 

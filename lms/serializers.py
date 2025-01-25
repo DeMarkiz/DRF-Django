@@ -32,6 +32,11 @@ class CourseSubscriptionSerializer(ModelSerializer):
 
     class Meta:
         model = CourseSubscription
-        fields = ["course"]
+        fields = '__all__'
+        validators = [
+            serializers.UniqueTogetherValidator(
+                fields=['user', 'course'], queryset=CourseSubscription.objects.all()
+            )
+        ]
         read_only_fields = ('user',)
 
