@@ -34,4 +34,4 @@ class CourseSubscriptionSerializer(ModelSerializer):
         model = CourseSubscription
         fields = ["course"]
         read_only_fields = ('user',)
-        read_only_fields = ('user',)
+
