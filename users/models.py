@@ -29,11 +29,21 @@ class CustomUser(AbstractUser):
 
 
 class Payment(models.Model):
+    PAYMENT_CASH = 'cash'
+    PAYMENT_TRANSFER = 'transfer'
 
-    CASH = "cash"
-    TRANSFER = "transfer"
+    PAYMENT_CHOICES = [
+        (PAYMENT_CASH, 'Наличные'),
+        (PAYMENT_TRANSFER, 'Перевод на счет'),
+    ]
 
-    METHOD_CHOICES = [(CASH, "Наличные"), (TRANSFER, "Перевод")]
+    STATUS_UNPAID = 'unpaid'
+    STATUS_PAID = 'paid'
+
+    STATUS_CHOICES = [
+        (STATUS_UNPAID, 'не оплачено'),
+        (STATUS_PAID, 'оплачено'),
+    ]
 
     user = models.ForeignKey(
         CustomUser,
@@ -63,10 +73,19 @@ class Payment(models.Model):
     )
     method = models.CharField(
         max_length=8,
-        choices=METHOD_CHOICES,
-        default=TRANSFER,
+        choices=PAYMENT_CHOICES,
+        default=PAYMENT_TRANSFER,
         verbose_name="Способ оплаты",
     )
+
+    session_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='ID сессии')
+    link = models.URLField(max_length=400, blank=True, null=True, verbose_name='ссылка на оплату')
+    status = models.CharField(
+        max_length=6, choices=STATUS_CHOICES, default=STATUS_UNPAID, verbose_name='статус платежа'
+    )
+
+    def __str__(self):
+        return f'Платеж {self.user} за {self.course if self.course else self.lesson}'
 
     class Meta:
         verbose_name = "Платеж"
