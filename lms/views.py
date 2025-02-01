@@ -1,9 +1,10 @@
+from django.contrib.admin import action
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets, views
 from users.permissions import IsModer, IsOwner
 from django.shortcuts import get_object_or_404
-
+from .tasks import send_course_update_notifications
 from .models import Course, Lesson, CourseSubscription
 from .serializers import (
     CourseSerializer,
@@ -40,6 +41,12 @@ class CourseViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]
+
+    def perform_update(self, serializer):
+        course_id = self.kwargs.get('pk')
+        send_course_update_notifications.delay(course_id)
+        serializer.save()
+
 
 
 class LessonCreateApiView(generics.CreateAPIView):

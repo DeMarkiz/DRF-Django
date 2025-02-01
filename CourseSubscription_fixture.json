@@ -1,0 +1,18 @@
+[
+{
+    "model": "lms.coursesubscription",
+    "pk": 1,
+    "fields": {
+        "user": 2,
+        "course": 1
+    }
+},
+{
+    "model": "lms.coursesubscription",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "course": 2
+    }
+}
+]
