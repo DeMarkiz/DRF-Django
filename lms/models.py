@@ -12,6 +12,8 @@ class Course(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
     )
 
+
+
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
@@ -45,22 +47,19 @@ class CourseSubscription(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
         verbose_name="Пользователь",
         related_name="user_course_subscription",
     )
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
         verbose_name="Курс",
         related_name="course_subscription",
     )
 
+
     def __str__(self):
-        return f"{self.user.name} - {self.course.name}"
+        return f"{self.user.email} - {self.course.name}"
 
     class Meta:
         verbose_name = "Подписка на курс"

@@ -1,0 +1,22 @@
+[
+{
+    "model": "lms.course",
+    "pk": 1,
+    "fields": {
+        "name": "Курсыч От Папани",
+        "preview": "",
+        "description": "папич",
+        "owner": 1
+    }
+},
+{
+    "model": "lms.course",
+    "pk": 2,
+    "fields": {
+        "name": "Python Develop",
+        "preview": "",
+        "description": "ffffffffff",
+        "owner": 1
+    }
+}
+]
