@@ -1,12 +1,8 @@
 from django.contrib import admin
-from .models import Course, Lesson
+from .models import Course, Lesson, CourseSubscription
+from django.apps import apps
 
+app = apps.get_app_config("lms")  # Замените на имя вашего приложения
 
-@admin.register(Course)
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ("name", "description")
-
-
-@admin.register(Lesson)
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ("name", "course", "description")
+for model in app.models.values():
+    admin.site.register(model)
