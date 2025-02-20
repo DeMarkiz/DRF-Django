@@ -21,7 +21,8 @@ services:
     image: python:3.12-slim
     container_name: celery_worker
     command: >
-      celery -A config worker --loglevel=info
+      sh -c "pip install -r /app/requirements.txt &&
+             celery -A config worker --loglevel=info"
     env_file:
       - .env
     volumes:
