@@ -32,10 +32,21 @@ class Payment(models.Model):
     PAYMENT_CASH = 'cash'
     PAYMENT_TRANSFER = 'transfer'
 
+
     PAYMENT_CHOICES = [
         (PAYMENT_CASH, 'Наличные'),
         (PAYMENT_TRANSFER, 'Перевод на счет'),
     ]
+
+
+    PAYMENT_CASH = "cash"
+    PAYMENT_TRANSFER = "transfer"
+
+    PAYMENT_CHOICES = [
+        (PAYMENT_CASH, 'Наличные'),
+        (PAYMENT_TRANSFER, 'Перевод на счет'),
+    ]
+
 
     STATUS_UNPAID = 'unpaid'
     STATUS_PAID = 'paid'
@@ -44,6 +55,10 @@ class Payment(models.Model):
         (STATUS_UNPAID, 'не оплачено'),
         (STATUS_PAID, 'оплачено'),
     ]
+
+
+    METHOD_CHOICES = [(PAYMENT_CASH, "Наличные"), (PAYMENT_TRANSFER, "Перевод")]
+
 
     user = models.ForeignKey(
         CustomUser,
