@@ -1,19 +1,14 @@
-
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets, views
 from users.permissions import IsModer, IsOwner
+from django.shortcuts import get_object_or_404
 
-from .tasks import send_course_update_notifications
 from .models import Course, Lesson, CourseSubscription
-from .serializers import (
-    CourseSerializer,
-    LessonSerializer,
-    CourseSubscriptionSerializer,
-)
+from .serializers import CourseSerializer, LessonSerializer, CourseSubscriptionSerializer, CoursePaymentSerializer
 from rest_framework.permissions import IsAuthenticated
 from lms.pagination import LessonCoursesPaginator
 from rest_framework.response import Response
+from .services import create_session, create_price
+from lms.tasks import send_mail_update_course
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -30,6 +25,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def perform_update(self, serializer):
+        course_id = self.kwargs.get('pk')
+        send_mail_update_course.delay(course_id)
+        serializer.save()
+
     def get_permissions(self):
         if self.action in ("list", "retrieve", "update", "partial_update"):
             permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -41,11 +41,6 @@ class CourseViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]
-
-    def perform_update(self, serializer):
-        course_id = self.kwargs.get("pk")
-        send_course_update_notifications.delay(course_id)
-        serializer.save()
 
 
 class LessonCreateApiView(generics.CreateAPIView):
@@ -60,7 +55,6 @@ class LessonCreateApiView(generics.CreateAPIView):
 
 class LessonListApiView(generics.ListAPIView):
     """Список"""
-
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
     pagination_class = LessonCoursesPaginator
@@ -74,7 +68,6 @@ class LessonListApiView(generics.ListAPIView):
 
 class LessonRetrieveApiView(generics.RetrieveAPIView):
     """Получить"""
-
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -82,7 +75,6 @@ class LessonRetrieveApiView(generics.RetrieveAPIView):
 
 class LessonUpdateApiView(generics.UpdateAPIView):
     """Обновить"""
-
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -90,41 +82,43 @@ class LessonUpdateApiView(generics.UpdateAPIView):
 
 class LessonDestroyApiView(generics.DestroyAPIView):
     """Удалить"""
-
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
 
 class CourseSubscriptionApiView(views.APIView):
-    permission_classes = [IsAuthenticated]
     serializer_class = CourseSubscriptionSerializer
+    queryset = CourseSubscription.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data.get('course')
+        course = get_object_or_404(Course, id=course_id)
+        sub_items = self.queryset.filter(user=user, course=course)
+
+        if sub_items.exists():
+            sub_items.delete()
+            message = 'Подписка удалена'
+        else:
+            CourseSubscription.objects.create(user=user, course=course)
+            message = 'Подписка активирована'
+        return Response({"message": message})
+
+
+class CoursePaymentCreateApiView(generics.CreateAPIView):
+    serializer_class = CoursePaymentSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    @swagger_auto_schema(
-        request_body=CourseSubscriptionSerializer,
-        responses={
-            200: openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={"message": openapi.Schema(type=openapi.TYPE_STRING)},
-            )
-        },
-    )
-    def post(self, *args, **kwargs):
-        user = self.request.user
-        course_id = self.request.data.get("course")
-        course_item = generics.get_object_or_404(Course.objects.all(), pk=course_id)
-        subs_item = course_item.subscriptions.filter(user=user)
-
-        # Если подписка у пользователя на этот курс есть - удаляем ее
-        if subs_item.exists():
-            subs_item.delete()
-            message = "подписка удалена"
-        # Если подписки у пользователя на этот курс нет - создаем ее
-        else:
-            CourseSubscription.objects.create(user=user, course=course_item)
-            message = "подписка добавлена"
-        # Возвращаем ответ в API
-        return Response({"message": message})
+        payment = serializer.save(user=self.request.user)
+        course_id = self.request.data.get('course')
+        course = get_object_or_404(Course, id=course_id)
+        amount_usd = course.price
+        payment = serializer.save(amount=amount_usd)
+        price = create_price(amount_usd, course.name)
+        session_id, payment_link = create_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()

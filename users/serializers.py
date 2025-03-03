@@ -6,8 +6,7 @@ class PaymentSerializer(ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = "__all__"
-        read_only_fields = ("user", "status", "payment_date", "session_id", "link")
+        fields = '__all__'
 
 
 class CustomUserSerializer(ModelSerializer):
@@ -15,7 +14,7 @@ class CustomUserSerializer(ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = "__all__"
+        fields = '__all__'
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -36,6 +35,7 @@ class CustomUserSerializer(ModelSerializer):
 
 
 class UserCommonSerializer(ModelSerializer):
+    """Сериализатор для пользователя"""
 
     class Meta:
         model = CustomUser
@@ -45,7 +45,9 @@ class UserCommonSerializer(ModelSerializer):
     def create(self, validated_data):
         # Хешируем пароль с использованием set_password
         password = validated_data.pop("password", None)
-        user = CustomUser(email=validated_data["email"])
+        user = CustomUser(
+            email=validated_data['email']
+        )
         user.set_password(password)
         user.save()
         return user

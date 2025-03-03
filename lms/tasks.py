@@ -6,7 +6,7 @@ from config.settings import DEFAULT_FROM_EMAIL
 
 
 @shared_task
-def send_course_update_notifications(course_id):
+def send_mail_update_course(course_id):
     """Отправка подписчикам уведомлений об изменениях в курсе"""
     course = get_object_or_404(Course, id=course_id)
     subscriptions = course.course_subscription.all()
