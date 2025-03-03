@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 from .views import (
     CourseViewSet,
@@ -10,7 +10,6 @@ from .views import (
     CourseSubscriptionApiView,
 )
 
-from rest_framework.mixins import CreateModelMixin
 
 app_name = "lms"
 
@@ -25,5 +24,7 @@ urlpatterns = [
     path(
         "lesson/<int:pk>/delete", LessonDestroyApiView.as_view(), name="lesson_delete"
     ),
-    path('course/subscribe', CourseSubscriptionApiView.as_view(), name='course_subscribe'),
+    path(
+        "course/subscribe", CourseSubscriptionApiView.as_view(), name="course_subscribe"
+    ),
 ] + router.urls

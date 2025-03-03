@@ -9,9 +9,8 @@ from .models import CustomUser, Payment
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .permissions import IsUser
 from .serializers import PaymentSerializer, UserCommonSerializer, CustomUserSerializer
-from users.permissions import IsModer, IsOwner, IsUser
+from users.permissions import IsModer, IsUser
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -63,15 +62,15 @@ class PaymentViewSet(viewsets.ModelViewSet):
     filterset_fields = ["course", "lesson", "method"]
     orderind_fields = ["payment_date"]
 
-
     def get_queryset(self):
-        if getattr(self, 'swagger_fake_view', False):
+        if getattr(self, "swagger_fake_view", False):
             return Payment.objects.none()
         return Payment.objects.filter(user=self.request.user)
 
 
 class PaymentStatusAPIView(APIView):
     permission_classes = [IsAuthenticated, IsUser | IsModer]
+
     @swagger_auto_schema(
         responses={
             200: openapi.Response(
@@ -79,15 +78,17 @@ class PaymentStatusAPIView(APIView):
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'session_id': openapi.Schema(type=openapi.TYPE_STRING, title='ID сессии'),
-                        'payment_status': openapi.Schema(
+                        "session_id": openapi.Schema(
+                            type=openapi.TYPE_STRING, title="ID сессии"
+                        ),
+                        "payment_status": openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            title='Статус платежа',
-                            enum=['unpaid', 'paid'],
+                            title="Статус платежа",
+                            enum=["unpaid", "paid"],
                             read_only=True,
                         ),
-                    }
-                )
+                    },
+                ),
             ),
         }
     )
@@ -95,7 +96,7 @@ class PaymentStatusAPIView(APIView):
         try:
             payment = Payment.objects.get(session_id=session_id)
         except Payment.DoesNotExist:
-            raise NotFound('Платеж с указанным session_id не найден')
+            raise NotFound("Платеж с указанным session_id не найден")
         # Запуск проверки разрешений для конкретного объекта
         obj = payment.paid_course or payment.paid_lesson
         self.check_object_permissions(request, obj)
@@ -103,7 +104,9 @@ class PaymentStatusAPIView(APIView):
         if payment.status != payment_status:
             payment.status = payment_status
             payment.save()
-        return Response({
-            'session_id': session_id,
-            'payment_status': payment_status,
-        })
+        return Response(
+            {
+                "session_id": session_id,
+                "payment_status": payment_status,
+            }
+        )

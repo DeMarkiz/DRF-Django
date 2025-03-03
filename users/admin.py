@@ -8,5 +8,5 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Payment)
-class CustomUserAdmin(admin.ModelAdmin):
+class GhostUserAdmin(admin.ModelAdmin):
     list_display = ("user", "amount", "method")

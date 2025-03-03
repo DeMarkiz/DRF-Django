@@ -12,8 +12,6 @@ class Course(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
     )
 
-
-
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
@@ -56,7 +54,6 @@ class CourseSubscription(models.Model):
         verbose_name="Курс",
         related_name="course_subscription",
     )
-
 
     def __str__(self):
         return f"{self.user.email} - {self.course.name}"

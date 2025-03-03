@@ -25,7 +25,6 @@ def send_course_update_notifications(course_id):
 
             responses[recipient] = "Успешно отправлено"
         except Exception as e:
-            response = f"{recipient}: Ошибка: {str(e)}"
             responses[recipient] = f"Ошибка: {str(e)}"
 
     print(responses)

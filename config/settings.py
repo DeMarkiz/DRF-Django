@@ -11,11 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
-from django.conf.global_settings import AUTH_USER_MODEL
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -150,6 +150,8 @@ SERVER_EMAIL = EMAIL_HOST_USER
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 MEDIA_URL = "media/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -171,24 +173,26 @@ SIMPLE_JWT = {
 
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'description': 'Введите токен в формате: Bearer <Ваш JWT-токен>',
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Введите токен в формате: Bearer <Ваш JWT-токен>",
         },
     },
 }
-STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 # Настройки для Celery
 
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = os.getenv('LOCATION') # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = os.getenv(
+    "LOCATION"
+)  # Например, Redis, который по умолчанию работает на порту 6379
 
 # URL-адрес брокера результатов, также Redis
-CELERY_RESULT_BACKEND = os.getenv('LOCATION')
+CELERY_RESULT_BACKEND = os.getenv("LOCATION")
 
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = "UTC"
@@ -200,8 +204,18 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
-        'task': 'users.tasks.user_block',  # Путь к задаче
-        'schedule': timedelta(days=1),  # Расписание выполнения задачи (например, каждые 10 минут)
+    "task-name": {
+        "task": "users.tasks.user_block",  # Путь к задаче
+        "schedule": timedelta(
+            days=1
+        ),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "test_db.sqlite3",
+        }
+    }

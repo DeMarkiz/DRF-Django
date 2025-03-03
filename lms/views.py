@@ -1,11 +1,9 @@
 
-from django.contrib.admin import action
-
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets, views
 from users.permissions import IsModer, IsOwner
-from django.shortcuts import get_object_or_404
+
 from .tasks import send_course_update_notifications
 from .models import Course, Lesson, CourseSubscription
 from .serializers import (
@@ -13,7 +11,7 @@ from .serializers import (
     LessonSerializer,
     CourseSubscriptionSerializer,
 )
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from lms.pagination import LessonCoursesPaginator
 from rest_framework.response import Response
 
@@ -45,10 +43,9 @@ class CourseViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_update(self, serializer):
-        course_id = self.kwargs.get('pk')
+        course_id = self.kwargs.get("pk")
         send_course_update_notifications.delay(course_id)
         serializer.save()
-
 
 
 class LessonCreateApiView(generics.CreateAPIView):
@@ -111,25 +108,23 @@ class CourseSubscriptionApiView(views.APIView):
         responses={
             200: openapi.Schema(
                 type=openapi.TYPE_OBJECT,
-                properties={
-                    'message': openapi.Schema(type=openapi.TYPE_STRING)
-                }
+                properties={"message": openapi.Schema(type=openapi.TYPE_STRING)},
             )
-        }
+        },
     )
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('course')
+        course_id = self.request.data.get("course")
         course_item = generics.get_object_or_404(Course.objects.all(), pk=course_id)
         subs_item = course_item.subscriptions.filter(user=user)
 
         # Если подписка у пользователя на этот курс есть - удаляем ее
         if subs_item.exists():
             subs_item.delete()
-            message = 'подписка удалена'
+            message = "подписка удалена"
         # Если подписки у пользователя на этот курс нет - создаем ее
         else:
             CourseSubscription.objects.create(user=user, course=course_item)
-            message = 'подписка добавлена'
+            message = "подписка добавлена"
         # Возвращаем ответ в API
         return Response({"message": message})
