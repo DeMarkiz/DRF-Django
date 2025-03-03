@@ -9,14 +9,14 @@ class LessonSerializer(ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CourseSubscriptionSerializer(ModelSerializer):
 
     class Meta:
         model = CourseSubscription
-        fields = ['course']
+        fields = ["course"]
 
 
 class CourseSerializer(ModelSerializer):
@@ -26,7 +26,7 @@ class CourseSerializer(ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
 
     def get_subscription(self, course):
-        currency_user = self.context.get('request', None).user
+        currency_user = self.context.get("request", None).user
         return course.course_subscription.filter(user=currency_user).exists()
 
     def get_lessons_count(self, course):
@@ -34,7 +34,7 @@ class CourseSerializer(ModelSerializer):
 
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CoursePaymentSerializer(serializers.ModelSerializer):

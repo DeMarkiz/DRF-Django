@@ -1,0 +1,62 @@
+[
+{
+    "model": "lms.lesson",
+    "pk": 3,
+    "fields": {
+        "name": "Урок 1",
+        "description": "что то",
+        "preview": "",
+        "course": 1,
+        "url": "https://www.youtube.com/watch?v=noKRZEeqNvk",
+        "owner": 1
+    }
+},
+{
+    "model": "lms.lesson",
+    "pk": 4,
+    "fields": {
+        "name": "Урок 2",
+        "description": "меткость",
+        "preview": "",
+        "course": 2,
+        "url": "https://www.youtube.com/watch?v=sZdWTeDypk0",
+        "owner": 2
+    }
+},
+{
+    "model": "lms.lesson",
+    "pk": 5,
+    "fields": {
+        "name": "Урок 3",
+        "description": "проходим криты",
+        "preview": "",
+        "course": 2,
+        "url": "https://www.youtube.com/watch?v=H01o5bl-41E",
+        "owner": 2
+    }
+},
+{
+    "model": "lms.lesson",
+    "pk": 6,
+    "fields": {
+        "name": "Урок 4",
+        "description": "JAWNY - Honeypie Animation MV (Full Version by SeanWay Studio)",
+        "preview": "",
+        "course": 3,
+        "url": "https://www.youtube.com/watch?v=mcYLzu_1cNc",
+        "owner": 1
+    }
+},
+{
+    "model": "lms.lesson",
+    "pk": 7,
+    "fields": {
+        "name": "Ссылку стоит проверить я считаю!",
+        "description": "!!!ОБЯЗАТЕЛЬНО!!!",
+        "preview": "",
+        "course": 3,
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "owner": 1
+    }
+}
+]

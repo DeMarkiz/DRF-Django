@@ -14,16 +14,17 @@ def convert_rub_to_usd(amount):
 
 def create_price(amount, course_name):
     return stripe.Price.create(
-        currency='usd',
+        currency="usd",
         unit_amount=amount * 100,
-        product_data={'name': course_name},)
+        product_data={"name": course_name},
+    )
 
 
 def create_session(price):
     session = stripe.checkout.Session.create(
         success_url="http://127.0.0.1:8000",
-        line_items=[{"price": price.get('id'), "quantity": 1}],
+        line_items=[{"price": price.get("id"), "quantity": 1}],
         mode="payment",
     )
 
-    return session.get('id'), session.get('url')
+    return session.get("id"), session.get("url")

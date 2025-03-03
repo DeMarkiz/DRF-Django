@@ -3,7 +3,12 @@ from users.permissions import IsModer, IsOwner
 from django.shortcuts import get_object_or_404
 
 from .models import Course, Lesson, CourseSubscription
-from .serializers import CourseSerializer, LessonSerializer, CourseSubscriptionSerializer, CoursePaymentSerializer
+from .serializers import (
+    CourseSerializer,
+    LessonSerializer,
+    CourseSubscriptionSerializer,
+    CoursePaymentSerializer,
+)
 from rest_framework.permissions import IsAuthenticated
 from lms.pagination import LessonCoursesPaginator
 from rest_framework.response import Response
@@ -26,7 +31,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def perform_update(self, serializer):
-        course_id = self.kwargs.get('pk')
+        course_id = self.kwargs.get("pk")
         send_mail_update_course.delay(course_id)
         serializer.save()
 
@@ -55,6 +60,7 @@ class LessonCreateApiView(generics.CreateAPIView):
 
 class LessonListApiView(generics.ListAPIView):
     """Список"""
+
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
     pagination_class = LessonCoursesPaginator
@@ -68,6 +74,7 @@ class LessonListApiView(generics.ListAPIView):
 
 class LessonRetrieveApiView(generics.RetrieveAPIView):
     """Получить"""
+
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -75,6 +82,7 @@ class LessonRetrieveApiView(generics.RetrieveAPIView):
 
 class LessonUpdateApiView(generics.UpdateAPIView):
     """Обновить"""
+
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
@@ -82,6 +90,7 @@ class LessonUpdateApiView(generics.UpdateAPIView):
 
 class LessonDestroyApiView(generics.DestroyAPIView):
     """Удалить"""
+
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
@@ -94,16 +103,16 @@ class CourseSubscriptionApiView(views.APIView):
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('course')
+        course_id = self.request.data.get("course")
         course = get_object_or_404(Course, id=course_id)
         sub_items = self.queryset.filter(user=user, course=course)
 
         if sub_items.exists():
             sub_items.delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
         else:
             CourseSubscription.objects.create(user=user, course=course)
-            message = 'Подписка активирована'
+            message = "Подписка активирована"
         return Response({"message": message})
 
 
@@ -113,7 +122,7 @@ class CoursePaymentCreateApiView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         payment = serializer.save(user=self.request.user)
-        course_id = self.request.data.get('course')
+        course_id = self.request.data.get("course")
         course = get_object_or_404(Course, id=course_id)
         amount_usd = course.price
         payment = serializer.save(amount=amount_usd)

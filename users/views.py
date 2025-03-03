@@ -12,8 +12,10 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
 
     def get_serializer_class(self):
-        if (self.action in ("retrieve", "update", "partial_update", "destroy")
-                and self.request.user.email == self.get_object().email):
+        if (
+            self.action in ("retrieve", "update", "partial_update", "destroy")
+            and self.request.user.email == self.get_object().email
+        ):
             return CustomUserSerializer
         return UserCommonSerializer
 
@@ -35,5 +37,5 @@ class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['course', 'lesson', 'method']
-    orderind_fields = ['payment_date']
+    filterset_fields = ["course", "lesson", "method"]
+    orderind_fields = ["payment_date"]
